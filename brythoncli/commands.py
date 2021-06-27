@@ -1,6 +1,10 @@
 from easycli import Root, Argument, SubCommand
 
 
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
+
+
 class Pack(SubCommand):
     __command__ = 'pack'
     __aliases__ = ['p']
@@ -47,3 +51,4 @@ class Brython(Root):
             return
 
         self._parser.print_help()
+        return EXIT_FAILURE

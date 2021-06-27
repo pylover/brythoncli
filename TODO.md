@@ -1,2 +1,5 @@
+- bddcli
 - create package
+- github actions
+- coveralls
 - pypi
