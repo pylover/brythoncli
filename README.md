@@ -9,14 +9,28 @@
 pip install brythoncli
 ```
 
-Or, pip editable mode:
+Or, from the source:
+
+```bash
+cd path/to/brythoncli
+pip install .
+```
+
+## Usage
+
+```bash
+barython pack --help
+```
+
+## Contribution
 
 ```bash
 cd path/to/brythoncli
 pip install -r requirements-dev.txt
 pip install -e .
+make test
+make cover
 ```
-
 
 
 

@@ -11,6 +11,60 @@ def sortlines(s):
     return '\n'.join(sorted(s.splitlines()))
 
 
+def test_pack_pypackage(tempstruct, changedir):
+    temproot = tempstruct(**{
+        'foo': {
+            '__init__.py': 'i = 10',
+            'baz.py': 'i = 11',
+        }
+    })
+    changedir(temproot)
+    outfile = path.join(temproot, 'bar.brython.js')
+
+    with Given(app, f'pack -d{temproot}/foo bar'):
+        assert stderr == ''
+        assert status == 0
+        print(stdout)
+        assert sortlines(stdout) == sortlines('''\
+Generating package bar
+Adding bar package.
+Adding bar.baz module.
+2 files
+''')
+        assert path.exists(outfile)
+
+
+def test_pack_systemfiles(tempstruct, changedir):
+    temproot = tempstruct(**{
+        '.foo': {
+            '__init__.py': 'i = 10',
+        },
+        '.bar': {
+            'baz.py': 'i = 21',
+        },
+        'qux': {
+            '.bar.py': 'i = 31',
+            'thud.py': 'i = 32',
+        },
+        '_fred': {
+            'baz.py': 'i = 41',
+        }
+    })
+    changedir(temproot)
+    outfile = path.join(temproot, 'foo.brython.js')
+
+    with Given(app, 'pack foo'):
+        assert stderr == ''
+        assert status == 0
+        print(stdout)
+        assert sortlines(stdout) == sortlines('''\
+Generating package foo
+Adding qux.thud module.
+1 files
+''')
+        assert path.exists(outfile)
+
+
 def test_pack_exclude(tempstruct, changedir):
     temproot = tempstruct(
         foo={
@@ -27,7 +81,6 @@ def test_pack_exclude(tempstruct, changedir):
     with Given(app, 'pack foo'):
         assert stderr == ''
         assert status == 0
-        assert path.exists(outfile)
         assert sortlines(stdout) == sortlines('''\
 Generating package foo
 Adding bar.baz module.
@@ -35,6 +88,7 @@ Adding bar.bar module.
 Adding foo package.
 3 files
 ''')
+        assert path.exists(outfile)
 
         when(given + '-ebaz')
         assert stderr == ''

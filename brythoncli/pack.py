@@ -7,10 +7,26 @@ import json
 from brython import make_package, python_minifier
 
 
-def must_exclude(excludes, d):
+def excludefile(excludes, name, ext):
+    if name.startswith('.') or ext != '.py':
+        return True
+
+    if name in excludes:
+        return True
+
+    return False
+
+
+def excludedir(excludes, d):
     root_elts = d.split(os.sep)
-    for ex in excludes:
-        if ex in root_elts:
+    for p in root_elts:
+        if len(p) > 1 and p.startswith('.'):
+            return True
+
+        if p.startswith('_'):
+            return True
+
+        if p in excludes:
             return True
 
     return False
@@ -25,29 +41,22 @@ def create_package(package_name, package_path, excludes=None, outpath=None):
     if excludes is None:
         excludes = []
 
-    for dirpath, dirnames, filenames in os.walk(package_path):
-        # TODO: Remove it, not used, reported by pyflake.
-        # flag = False
+    for dirpath, _, filenames in os.walk(package_path):
 
-        if must_exclude(excludes, dirpath):
+        if excludedir(excludes, dirpath):
             continue
-
-        if '__pycache__' in dirnames:
-            dirnames.remove("__pycache__")
 
         if dirpath == package_path:
             package = []
         else:
             package = dirpath[len(package_path) + 1:].split(os.sep)
+
         if has_init:
             package.insert(0, package_name)
 
         for filename in filenames:
             name, ext = os.path.splitext(filename)
-            if ext != '.py':
-                continue
-
-            if name in excludes:
+            if excludefile(excludes, name, ext):
                 continue
 
             is_package = name.endswith('__init__')
@@ -66,8 +75,6 @@ def create_package(package_name, package_path, excludes=None, outpath=None):
             if os.path.basename(filename) != "__init__.py":
                 path_elts.append(os.path.basename(filename)[:-3])
 
-            # TODO: Remove it, not used, reported by pyflake.
-            # fqname = ".".join(path_elts)
             with open(absname, encoding="utf-8") as f:
                 tree = ast.parse(f.read())
                 visitor = make_package.Visitor(package_path, package)
