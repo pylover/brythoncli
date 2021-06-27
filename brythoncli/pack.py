@@ -7,23 +7,31 @@ import json
 from brython import make_package, python_minifier
 
 
-def create_package(package_name, package_path, exclude_dirs=None,
-                   output_path=None):
-    if not package_name:
-        raise ValueError("package name is not specified")
+def must_exclude(excludes, d):
+    root_elts = d.split(os.sep)
+    for ex in excludes:
+        if ex in root_elts:
+            return True
+
+    return False
+
+
+def create_package(package_name, package_path, excludes=None, outpath=None):
     print("Generating package {}".format(package_name))
     VFS = {"$timestamp": int(1000 * time.time())}
     has_init = os.path.exists(os.path.join(package_path, "__init__.py"))
     nb = 0
-    if exclude_dirs is None:
-        exclude_dirs = []
+
+    if excludes is None:
+        excludes = []
+
     for dirpath, dirnames, filenames in os.walk(package_path):
         # TODO: Remove it, not used, reported by pyflake.
         # flag = False
-        root_elts = dirpath.split(os.sep)
-        for exclude in exclude_dirs:
-            if exclude in root_elts:
-                continue
+
+        if must_exclude(excludes, dirpath):
+            continue
+
         if '__pycache__' in dirnames:
             dirnames.remove("__pycache__")
 
@@ -38,6 +46,10 @@ def create_package(package_name, package_path, exclude_dirs=None,
             name, ext = os.path.splitext(filename)
             if ext != '.py':
                 continue
+
+            if name in excludes:
+                continue
+
             is_package = name.endswith('__init__')
             if is_package:
                 mod_name = '.'.join(package)
@@ -75,11 +87,11 @@ def create_package(package_name, package_path, exclude_dirs=None,
     else:
         print('{} files'.format(nb))
 
-        output_path = output_path or os.path.join(
-            package_path,
+        outpath = os.path.join(
+            outpath or os.curdir,
             package_name + ".brython.js"
         )
-        with open(output_path, "w", encoding="utf-8") as out:
+        with open(outpath, "w", encoding="utf-8") as out:
             out.write('__BRYTHON__.use_VFS = true;\n')
             out.write('var scripts = {}\n'.format(json.dumps(VFS)))
             out.write('__BRYTHON__.update_VFS(scripts)\n')

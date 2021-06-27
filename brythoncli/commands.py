@@ -17,6 +17,11 @@ class Pack(SubCommand):
             help='The directory to search for the package, default: ".".'
         ),
         Argument(
+            '-o', '--output-directory',
+            default='.',
+            help='The directory to generate the brython package, default: ".".'
+        ),
+        Argument(
             '-e', '--exclude',
             action='append',
             help='Package name to exclude. this option can be specified '
@@ -29,8 +34,8 @@ class Pack(SubCommand):
         create_package(
             args.name,
             args.package_directory,
-            exclude_dirs=args.exclude,
-            output_path=None
+            excludes=args.exclude,
+            outpath=args.output_directory
         )
 
 
