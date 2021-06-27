@@ -11,6 +11,27 @@ def sortlines(s):
     return '\n'.join(sorted(s.splitlines()))
 
 
+def test_pack_emptydirectory(tempstruct, changedir):
+    temproot = tempstruct(**{
+        '.foo': {
+            '__init__.py': 'i = 10',
+            'baz.py': 'i = 11',
+        }
+    })
+    changedir(temproot)
+    outfile = path.join(temproot, 'bar.brython.js')
+
+    with Given(app, f'pack bar'):
+        assert stderr == ''
+        assert status == 0
+        assert sortlines(stdout) == sortlines('''\
+Generating package bar
+No file to create package.
+''')
+        assert not path.exists(outfile)
+
+
+
 def test_pack_pypackage(tempstruct, changedir):
     temproot = tempstruct(**{
         'foo': {
@@ -24,7 +45,6 @@ def test_pack_pypackage(tempstruct, changedir):
     with Given(app, f'pack -d{temproot}/foo bar'):
         assert stderr == ''
         assert status == 0
-        print(stdout)
         assert sortlines(stdout) == sortlines('''\
 Generating package bar
 Adding bar package.
@@ -56,7 +76,6 @@ def test_pack_systemfiles(tempstruct, changedir):
     with Given(app, 'pack foo'):
         assert stderr == ''
         assert status == 0
-        print(stdout)
         assert sortlines(stdout) == sortlines('''\
 Generating package foo
 Adding qux.thud module.

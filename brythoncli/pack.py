@@ -90,7 +90,7 @@ def create_package(package_name, package_path, excludes=None, outpath=None):
                 f'Adding {mod_name} {"package" if is_package else "module"}.')
 
     if nb == 0:
-        print("No Python file found in current directory")
+        print("No file to create package.")
     else:
         print('{} files'.format(nb))
 
