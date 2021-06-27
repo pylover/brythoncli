@@ -21,7 +21,7 @@ def test_pack_emptydirectory(tempstruct, changedir):
     changedir(temproot)
     outfile = path.join(temproot, 'bar.brython.js')
 
-    with Given(app, f'pack bar'):
+    with Given(app, 'pack bar'):
         assert stderr == ''
         assert status == 0
         assert sortlines(stdout) == sortlines('''\
@@ -29,7 +29,6 @@ Generating package bar
 No file to create package.
 ''')
         assert not path.exists(outfile)
-
 
 
 def test_pack_pypackage(tempstruct, changedir):
