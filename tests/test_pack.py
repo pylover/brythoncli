@@ -6,6 +6,10 @@ from bddcli import Given, status, stdout, stderr, Application
 app = Application('brythoncli', 'brythoncli:Brython.quickstart')
 
 
+def sortlines(s):
+    return '\n'.join(sorted(s.splitlines()))
+
+
 def test_pack_simple(tempstruct, changedir):
     temproot = tempstruct(
         foo={
@@ -23,13 +27,13 @@ def test_pack_simple(tempstruct, changedir):
         assert status == 0
         assert path.exists(outfile)
         assert stderr == ''
-        assert stdout == '''\
+        assert sortlines(stdout) == sortlines('''\
 Generating package foo
 Adding bar.baz module.
 Adding bar.bar module.
 Adding foo package.
 3 files
-'''
+''')
 
 
 # def test_pack_minimum_argument():
