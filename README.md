@@ -20,6 +20,7 @@ pip install .
 
 ```bash
 barython pack --help
+barython serve --help
 ```
 
 ## Contribution

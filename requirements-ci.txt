@@ -1,4 +1,5 @@
 pytest-cov
 coveralls
+requests
 pylama
 bddcli

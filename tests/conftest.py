@@ -1,4 +1,5 @@
 import os
+import socket
 import tempfile
 import shutil
 from os import path
@@ -34,9 +35,7 @@ def tempstruct():
                 f.write(v)
 
     def _make_temp_directory(**kw):
-        """
-        Structure example: {'a.html': 'Hello', 'b': {}}
-        """
+        """Structure example: {'a.html': 'Hello', 'b': {}}."""
         root = tempfile.mkdtemp()
         temp_directories.append(root)
         create_nodes(root, **kw)
@@ -46,3 +45,13 @@ def tempstruct():
 
     for d in temp_directories:
         shutil.rmtree(d)
+
+
+@pytest.fixture
+def freeport():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.bind((socket.gethostname(), 0))
+        return s.getsockname()[1]
+    finally:
+        s.close()
