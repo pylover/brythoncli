@@ -1,5 +1,6 @@
-- bddcli
-- create package
 - github actions
 - coveralls
+- badges
+- create package
 - pypi
+- Readme how to use

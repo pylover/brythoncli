@@ -1,6 +1,5 @@
-
 import brython
-from bddcli import Given, when, stdout, status, stderr, Application, given
+from bddcli import Given, when, stdout, status, stderr, Application
 
 import brythoncli
 

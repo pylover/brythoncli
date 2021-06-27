@@ -1,5 +1,7 @@
-# brythoncli
+[![Build](https://github.com/pylover/brythoncli/actions/workflows/build.yml/badge.svg)](https://github.com/pylover/brythoncli/actions/workflows/build.yml)
+[![Coverage Status](https://coveralls.io/repos/github/pylover/brythoncli/badge.svg?branch=master)](https://coveralls.io/github/pylover/brythoncli?branch=master)
 
+# brythoncli
 
 ## Install
 

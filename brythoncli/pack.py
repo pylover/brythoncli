@@ -1,3 +1,10 @@
+import os
+import ast
+import time
+import json
+
+
+from brython import make_package, python_minifier
 
 
 def create_package(package_name, package_path, exclude_dirs=None,
@@ -11,7 +18,8 @@ def create_package(package_name, package_path, exclude_dirs=None,
     if exclude_dirs is None:
         exclude_dirs = []
     for dirpath, dirnames, filenames in os.walk(package_path):
-        flag = False
+        # TODO: Remove it, not used, reported by pyflake.
+        # flag = False
         root_elts = dirpath.split(os.sep)
         for exclude in exclude_dirs:
             if exclude in root_elts:
@@ -45,10 +53,12 @@ def create_package(package_name, package_path, exclude_dirs=None,
             path_elts = package[:]
             if os.path.basename(filename) != "__init__.py":
                 path_elts.append(os.path.basename(filename)[:-3])
-            fqname = ".".join(path_elts)
+
+            # TODO: Remove it, not used, reported by pyflake.
+            # fqname = ".".join(path_elts)
             with open(absname, encoding="utf-8") as f:
                 tree = ast.parse(f.read())
-                visitor = Visitor(package_path, package)
+                visitor = make_package.Visitor(package_path, package)
                 visitor.visit(tree)
                 imports = sorted(list(visitor.imports))
 
@@ -57,7 +67,8 @@ def create_package(package_name, package_path, exclude_dirs=None,
             else:
                 VFS[mod_name] = [ext, data, imports]
 
-            print("adding {} package {}".format(mod_name, is_package))
+            print(
+                f'Adding {mod_name} {"package" if is_package else "module"}.')
 
     if nb == 0:
         print("No Python file found in current directory")
