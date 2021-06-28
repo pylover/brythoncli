@@ -1,20 +1,24 @@
 from os import path
 
-from brython import list_modules
+
+from .clinic.list_modules import load_stdlib_sitepackages, load_user_modules, \
+    ModulesFinder
 
 
-def pack(outdir, filename):
+def pack(searchpath, stdlib_searchpath, outdir, filename):
     print(
         'Create brython_modules.js with all the modules used by the '
         'application'
     )
 
     print('Searching brython_stdlib.js...')
-    stdlib_dir, stdlib = list_modules.load_stdlib_sitepackages()
+    stdlib_dir, stdlib = load_stdlib_sitepackages(
+        stdlib_searchpath
+    )
 
     print('Finding packages...')
-    user_modules = list_modules.load_user_modules()
-    finder = list_modules.ModulesFinder(
+    user_modules = load_user_modules(searchpath)
+    finder = ModulesFinder(
         stdlib=stdlib,
         user_modules=user_modules
     )

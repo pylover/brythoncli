@@ -6,17 +6,6 @@ from easycli import Root, Argument, SubCommand
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
-"""
-    parser.add_argument('--reset', help='Reset brython_modules.js to stdlib',
-        action="store_true")
-
-    if args.reset:
-        print('Reset brython_modules.js to standard distribution')
-        shutil.copyfile(os.path.join(os.getcwd(), 'brython_stdlib.js'),
-            os.path.join(os.getcwd(), 'brython_modules.js'))
-
-"""
-
 
 class PackDependencies(SubCommand):
     __command__ = 'pack-dependencies'
@@ -25,12 +14,23 @@ class PackDependencies(SubCommand):
                'application'
     __arguments__ = [
         Argument(
+            '-l', '--stdlib-directory',
+            default='.',
+            help='The directory to search for brython_stdlib.js. default: ".".'
+        ),
+        Argument(
+            '-s', '--search-directory',
+            default='.',
+            help='The directory to search for python dependencies. '
+                 'default: ".".'
+        ),
+        Argument(
             '-o', '--output-directory',
             default='.',
             help='The directory to generate the brython modules, default: ".".'
         ),
         Argument(
-            '-f', '--output-filename',
+            '-f', '--filename',
             default='brython_modules.js',
             help='Output filename. default: brython_modules.js.'
         )
@@ -38,7 +38,12 @@ class PackDependencies(SubCommand):
 
     def __call__(self, args):
         from .dependencies import pack
-        pack(args.output_directory, filename=args.output_filename)
+        pack(
+            args.search_directory,
+            args.stdlib_directory,
+            args.output_directory,
+            filename=args.filename
+        )
 
 
 class Serve(SubCommand):
