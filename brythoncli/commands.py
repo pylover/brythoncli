@@ -81,6 +81,12 @@ class Pack(SubCommand):
             help='The directory to generate the brython package, default: ".".'
         ),
         Argument(
+            '--suffix',
+            default='.js',
+            help='The suffix to appended to package name as the name for '
+                 'output file. default: ".js".'
+        ),
+        Argument(
             '-e', '--exclude',
             action='append',
             help='Package name to exclude. this option can be specified '
@@ -94,7 +100,8 @@ class Pack(SubCommand):
             args.name,
             args.package_directory,
             excludes=args.exclude,
-            outpath=args.output_directory
+            outpath=args.output_directory,
+            suffix=args.suffix
         )
         return EXIT_SUCCESS
 

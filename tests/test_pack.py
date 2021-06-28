@@ -3,6 +3,28 @@ from os import path
 from bddcli import status, stdout, stderr, when, given
 
 
+def test_pack_suffix(app, tempstruct, changedir, sortlines):
+    temproot = tempstruct(**{
+        'foo': {
+            '__init__.py': 'i = 10',
+            'baz.py': 'i = 11',
+        }
+    })
+    changedir(temproot)
+    outfile = path.join(temproot, 'bar.brython.js')
+
+    with app(f'pack -d{temproot}/foo --suffix .brython.js bar'):
+        assert stderr == ''
+        assert status == 0
+        assert sortlines(stdout) == sortlines('''\
+Generating package bar
+Adding bar package.
+Adding bar.baz module.
+2 files
+''')
+        assert path.exists(outfile)
+
+
 def test_pack_emptydirectory(app, tempstruct, changedir, sortlines):
     temproot = tempstruct(**{
         '.foo': {
@@ -31,7 +53,7 @@ def test_pack_pypackage(app, tempstruct, changedir, sortlines):
         }
     })
     changedir(temproot)
-    outfile = path.join(temproot, 'bar.brython.js')
+    outfile = path.join(temproot, 'bar.js')
 
     with app(f'pack -d{temproot}/foo bar'):
         assert stderr == ''
@@ -62,7 +84,7 @@ def test_pack_systemfiles(app, tempstruct, changedir, sortlines):
         }
     })
     changedir(temproot)
-    outfile = path.join(temproot, 'foo.brython.js')
+    outfile = path.join(temproot, 'foo.js')
 
     with app('pack foo'):
         assert stderr == ''
@@ -86,7 +108,7 @@ def test_pack_exclude(app, tempstruct, changedir, sortlines):
         }
     )
     changedir(temproot)
-    outfile = path.join(temproot, 'foo.brython.js')
+    outfile = path.join(temproot, 'foo.js')
 
     with app('pack foo'):
         assert stderr == ''
@@ -132,7 +154,7 @@ def test_pack_simple(app, tempstruct, changedir, sortlines):
             'baz.py': 'i = 22',
         }
     )
-    outfile = path.join(temproot, 'foo.brython.js')
+    outfile = path.join(temproot, 'foo.js')
 
     changedir(temproot)
     with app('pack foo'):
@@ -159,7 +181,7 @@ def test_pack_packagedirectory(app, tempstruct, sortlines):
         }
     )
     outroot = tempstruct()
-    outfile = path.join(outroot, 'foo.brython.js')
+    outfile = path.join(outroot, 'foo.js')
 
     with app(f'pack -d{temproot} -o{outroot} foo'):
         assert stderr == ''

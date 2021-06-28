@@ -26,6 +26,9 @@ barython serve --help
 barython deps --help
 ```
 
+Checkout the `Makefile` at the root of https://github.com/dobisel/dial
+for more info.
+
 ## Contribution
 
 ```bash

@@ -32,7 +32,8 @@ def excludedir(excludes, d):
     return False
 
 
-def create_package(package_name, package_path, excludes=None, outpath=None):
+def create_package(package_name, package_path, excludes=None, outpath=None,
+                   suffix=".brython.js"):
     print("Generating package {}".format(package_name))
     VFS = {"$timestamp": int(1000 * time.time())}
     has_init = os.path.exists(os.path.join(package_path, "__init__.py"))
@@ -96,7 +97,7 @@ def create_package(package_name, package_path, excludes=None, outpath=None):
 
         outpath = os.path.join(
             outpath or os.curdir,
-            package_name + ".brython.js"
+            package_name + suffix
         )
         with open(outpath, "w", encoding="utf-8") as out:
             out.write('__BRYTHON__.use_VFS = true;\n')
