@@ -24,6 +24,7 @@ setup(
     install_requires=dependencies,
     include_package_data=True,
     license='MIT',
+    url='http://github.com/pylover/brythoncli',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     entry_points={
