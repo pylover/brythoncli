@@ -1,3 +1,5 @@
+import os
+
 from easycli import Root, Argument, SubCommand
 
 
@@ -55,6 +57,7 @@ class Pack(SubCommand):
             excludes=args.exclude,
             outpath=args.output_directory
         )
+        return EXIT_SUCCESS
 
 
 class Brython(Root):
@@ -62,9 +65,20 @@ class Brython(Root):
     __help__ = 'Brython command line interface'
     __arguments__ = [
         Argument('-V', '--version', action='store_true'),
+        Argument(
+            '-C', '--change-directory',
+            default='.',
+            help='Change the current working directory before executing, '
+                 'default: ".".'
+        ),
         Pack,
         Serve,
     ]
+
+    def _execute_subcommand(self, args):
+        if args.change_directory != '.':
+            os.chdir(args.change_directory)
+        return super()._execute_subcommand(args)
 
     def __call__(self, args):
         if args.version:
