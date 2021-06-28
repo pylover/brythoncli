@@ -511,8 +511,8 @@ def load_stdlib_sitepackages(search_path=None):
                 break
 
     if not stdlib_dir:
-        raise FileNotFoundError("Could not find brython_stdlib.js in this"
-                                " directory or below")
+        raise FileNotFoundError('Could not find brython_stdlib.js in'
+                                f'{search_path} directory or below')
 
     # search in site-packages
     sp_dir = os.path.join(stdlib_dir, "Lib", "site-packages")
