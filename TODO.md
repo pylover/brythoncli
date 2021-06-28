@@ -1,3 +1,2 @@
-- create package
 - pypi
 - Readme how to use
