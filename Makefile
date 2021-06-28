@@ -20,3 +20,8 @@ lint:
 env:
 	$(PIP) install -r requirements-dev.txt
 	$(PIP) install -e .
+
+.PHONY: dist
+dist:
+	python setup.py sdist
+
