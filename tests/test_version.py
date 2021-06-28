@@ -1,14 +1,11 @@
 import brython
-from bddcli import Given, when, stdout, status, stderr, Application
+from bddcli import when, stdout, status, stderr
 
 import brythoncli
 
 
-app = Application('brythoncli', 'brythoncli:Brython.quickstart')
-
-
-def test_version():
-    with Given(app):
+def test_version(app):
+    with app():
         assert status == 1
         assert stderr == ''
 

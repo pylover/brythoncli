@@ -1,10 +1,21 @@
 import os
 import socket
 import tempfile
+import functools
 import shutil
 from os import path
 
 import pytest
+from bddcli import Given, Application
+
+
+cliapp = Application('brython', 'brythoncli:Brython.quickstart')
+GivenApp = functools.partial(Given, cliapp)
+
+
+@pytest.fixture
+def app():
+    return GivenApp
 
 
 @pytest.fixture
@@ -31,6 +42,11 @@ def tempstruct():
                 create_nodes(name, **v)
                 continue
 
+            if hasattr(v, 'read'):
+                f = v
+                v = f.read()
+                f.close()
+
             with open(name, 'w') as f:
                 f.write(v)
 
@@ -55,3 +71,15 @@ def freeport():
         return s.getsockname()[1]
     finally:
         s.close()
+
+
+@pytest.fixture
+def here():
+    return path.abspath(path.dirname(__file__))
+
+
+@pytest.fixture
+def sortlines():
+    def sorter(s):
+        return '\n'.join(sorted(s.splitlines()))
+    return sorter

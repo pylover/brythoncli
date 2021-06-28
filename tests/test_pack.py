@@ -1,17 +1,9 @@
 from os import path
 
-from bddcli import Given, status, stdout, stderr, Application, when, given
+from bddcli import status, stdout, stderr, when, given
 
 
-app = Application('brythoncli', 'brythoncli:Brython.quickstart')
-
-
-# def test_help():
-def sortlines(s):
-    return '\n'.join(sorted(s.splitlines()))
-
-
-def test_pack_emptydirectory(tempstruct, changedir):
+def test_pack_emptydirectory(app, tempstruct, changedir, sortlines):
     temproot = tempstruct(**{
         '.foo': {
             '__init__.py': 'i = 10',
@@ -21,7 +13,7 @@ def test_pack_emptydirectory(tempstruct, changedir):
     changedir(temproot)
     outfile = path.join(temproot, 'bar.brython.js')
 
-    with Given(app, 'pack bar'):
+    with app('pack bar'):
         assert stderr == ''
         assert status == 0
         assert sortlines(stdout) == sortlines('''\
@@ -31,7 +23,7 @@ No file to create package.
         assert not path.exists(outfile)
 
 
-def test_pack_pypackage(tempstruct, changedir):
+def test_pack_pypackage(app, tempstruct, changedir, sortlines):
     temproot = tempstruct(**{
         'foo': {
             '__init__.py': 'i = 10',
@@ -41,7 +33,7 @@ def test_pack_pypackage(tempstruct, changedir):
     changedir(temproot)
     outfile = path.join(temproot, 'bar.brython.js')
 
-    with Given(app, f'pack -d{temproot}/foo bar'):
+    with app(f'pack -d{temproot}/foo bar'):
         assert stderr == ''
         assert status == 0
         assert sortlines(stdout) == sortlines('''\
@@ -53,7 +45,7 @@ Adding bar.baz module.
         assert path.exists(outfile)
 
 
-def test_pack_systemfiles(tempstruct, changedir):
+def test_pack_systemfiles(app, tempstruct, changedir, sortlines):
     temproot = tempstruct(**{
         '.foo': {
             '__init__.py': 'i = 10',
@@ -72,7 +64,7 @@ def test_pack_systemfiles(tempstruct, changedir):
     changedir(temproot)
     outfile = path.join(temproot, 'foo.brython.js')
 
-    with Given(app, 'pack foo'):
+    with app('pack foo'):
         assert stderr == ''
         assert status == 0
         assert sortlines(stdout) == sortlines('''\
@@ -83,7 +75,7 @@ Adding qux.thud module.
         assert path.exists(outfile)
 
 
-def test_pack_exclude(tempstruct, changedir):
+def test_pack_exclude(app, tempstruct, changedir, sortlines):
     temproot = tempstruct(
         foo={
             '__init__.py': 'i = 10',
@@ -96,7 +88,7 @@ def test_pack_exclude(tempstruct, changedir):
     changedir(temproot)
     outfile = path.join(temproot, 'foo.brython.js')
 
-    with Given(app, 'pack foo'):
+    with app('pack foo'):
         assert stderr == ''
         assert status == 0
         assert sortlines(stdout) == sortlines('''\
@@ -130,7 +122,7 @@ Adding foo package.
 ''')
 
 
-def test_pack_simple(tempstruct, changedir):
+def test_pack_simple(app, tempstruct, changedir, sortlines):
     temproot = tempstruct(
         foo={
             '__init__.py': 'i = 10',
@@ -143,7 +135,7 @@ def test_pack_simple(tempstruct, changedir):
     outfile = path.join(temproot, 'foo.brython.js')
 
     changedir(temproot)
-    with Given(app, 'pack foo'):
+    with app('pack foo'):
         assert status == 0
         assert path.exists(outfile)
         assert stderr == ''
@@ -156,7 +148,7 @@ Adding foo package.
 ''')
 
 
-def test_pack_packagedirectory(tempstruct):
+def test_pack_packagedirectory(app, tempstruct, sortlines):
     temproot = tempstruct(
         foo={
             '__init__.py': 'i = 10',
@@ -169,7 +161,7 @@ def test_pack_packagedirectory(tempstruct):
     outroot = tempstruct()
     outfile = path.join(outroot, 'foo.brython.js')
 
-    with Given(app, f'pack -d{temproot} -o{outroot} foo'):
+    with app(f'pack -d{temproot} -o{outroot} foo'):
         assert stderr == ''
         assert status == 0
         assert path.exists(outfile)

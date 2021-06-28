@@ -1,21 +1,18 @@
 import signal
 import time
 
-from bddcli import Given, stdout, status, stderr, Application
+from bddcli import stdout, status, stderr
 from requests import get
 
 
-app = Application('brythoncli', 'brythoncli:Brython.quickstart')
-
-
-def test_serve_changedirectory(tempstruct, freeport):
+def test_serve_changedirectory(app, tempstruct, freeport):
     temproot = tempstruct(**{
         'foo': {
             'baz.py': 'i = 1',
         }
     })
 
-    with Given(app, f'-C{temproot} serve -p{freeport}', nowait=True) as s:
+    with app(f'-C{temproot} serve -p{freeport}', nowait=True) as s:
         url = f'http://localhost:{freeport}'
         time.sleep(.5)
         resp = get(url)
@@ -37,8 +34,8 @@ Keyboard interrupt received, exiting.
         assert len(stderr.splitlines()) == 2
 
 
-def test_serve(freeport):
-    with Given(app, f'serve -p{freeport}', nowait=True) as s:
+def test_serve(app, freeport):
+    with app(f'serve -p{freeport}', nowait=True) as s:
         url = f'http://localhost:{freeport}'
         time.sleep(.5)
         resp = get(url)

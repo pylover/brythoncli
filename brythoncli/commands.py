@@ -6,6 +6,40 @@ from easycli import Root, Argument, SubCommand
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
+"""
+    parser.add_argument('--reset', help='Reset brython_modules.js to stdlib',
+        action="store_true")
+
+    if args.reset:
+        print('Reset brython_modules.js to standard distribution')
+        shutil.copyfile(os.path.join(os.getcwd(), 'brython_stdlib.js'),
+            os.path.join(os.getcwd(), 'brython_modules.js'))
+
+"""
+
+
+class PackDependencies(SubCommand):
+    __command__ = 'pack-dependencies'
+    __aliases__ = ['pack-deps', 'deps']
+    __help__ = 'Create brython_modules.js with all the modules used by the ' \
+               'application'
+    __arguments__ = [
+        Argument(
+            '-o', '--output-directory',
+            default='.',
+            help='The directory to generate the brython modules, default: ".".'
+        ),
+        Argument(
+            '-f', '--output-filename',
+            default='brython_modules.js',
+            help='Output filename. default: brython_modules.js.'
+        )
+    ]
+
+    def __call__(self, args):
+        from .dependencies import pack
+        pack(args.output_directory, filename=args.output_filename)
+
 
 class Serve(SubCommand):
     __command__ = 'serve'
@@ -73,6 +107,7 @@ class Brython(Root):
         ),
         Pack,
         Serve,
+        PackDependencies,
     ]
 
     def _execute_subcommand(self, args):
