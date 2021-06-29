@@ -19,6 +19,7 @@ dependencies = [
 
 setup(
     name='brythoncli',
+    description='Another command line interface for the Brython.',
     version=package_version,
     packages=find_packages(),
     install_requires=dependencies,

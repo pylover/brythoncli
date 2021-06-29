@@ -21,9 +21,9 @@ pip install .
 ## Usage
 
 ```bash
-barython pack --help
-barython serve --help
-barython deps --help
+brython pack --help
+brython serve --help
+brython deps --help
 ```
 
 Checkout the `Makefile` at the root of https://github.com/dobisel/dial
