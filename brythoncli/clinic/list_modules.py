@@ -17,6 +17,7 @@ import io
 import tokenize
 import token
 import logging
+import fnmatch
 
 logger = logging.getLogger(__name__)
 
@@ -209,12 +210,14 @@ class ImportsFinder:
 
 class ModulesFinder:
 
-    def __init__(self, directory=os.getcwd(), stdlib={}, user_modules={}):
+    def __init__(self, directory=os.getcwd(), stdlib={}, user_modules={},
+                 excludes=None):
         self.directory = directory
         self.modules = set()
 
         self.stdlib = stdlib
         self.user_modules = user_modules
+        self.excludes = excludes
 
     def get_imports(self, src, package=None):
         """Get all imports in source code src."""
@@ -271,6 +274,11 @@ class ModulesFinder:
                 path = os.path.join(dirname, filename)
                 if path == __file__:
                     continue
+
+                # Exclude
+                if exclude_match(filename, self.excludes):
+                    continue
+
                 ext = os.path.splitext(filename)[1]
                 if ext.lower() == '.html':
                     print("script in html", filename)
@@ -568,10 +576,25 @@ def is_package(folder):
             return True
 
 
-def load_user_modules(module_dir=os.getcwd()):
+def exclude_match(filename, excludes):
+    if not excludes:
+        return False
+
+    for pattern in excludes:
+        if fnmatch.fnmatch(filename, pattern):
+            return True
+
+    return False
+
+
+def load_user_modules(module_dir=os.getcwd(), excludes=None):
     user_modules = {}
     for dirname, dirnames, filenames in os.walk(module_dir):
         for filename in filenames:
+            # Exclude
+            if exclude_match(filename, excludes):
+                continue
+
             name, ext = os.path.splitext(filename)
             if not ext == ".py" or filename == "list_modules.py":
                 continue

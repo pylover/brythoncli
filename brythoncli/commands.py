@@ -33,6 +33,12 @@ class PackDependencies(SubCommand):
             '-f', '--filename',
             default='brython_modules.js',
             help='Output filename. default: brython_modules.js.'
+        ),
+        Argument(
+            '-e', '--exclude',
+            action='append',
+            help='glob pattern to exclude. this option can be specified '
+                 'multiple times.'
         )
     ]
 
@@ -42,7 +48,8 @@ class PackDependencies(SubCommand):
             args.search_directory,
             args.stdlib_directory,
             args.output_directory,
-            filename=args.filename
+            filename=args.filename,
+            excludes= args.exclude
         )
 
 
@@ -86,6 +93,7 @@ class Pack(SubCommand):
             help='The suffix to appended to package name as the name for '
                  'output file. default: ".js".'
         ),
+        # TODO: Glob pattern
         Argument(
             '-e', '--exclude',
             action='append',
