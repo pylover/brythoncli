@@ -49,7 +49,7 @@ class PackDependencies(SubCommand):
             args.stdlib_directory,
             args.output_directory,
             filename=args.filename,
-            excludes= args.exclude
+            excludes=args.exclude
         )
 
 

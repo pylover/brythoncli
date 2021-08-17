@@ -105,7 +105,6 @@ def test_packdependencies_exclude(app, tempstruct, here, sortlines):
         'brython_stdlib.js': open(path.join(here, 'stuff/brython_stdlib.js'))
     })
     outfile = path.join(temproot, 'brython_modules.js')
-    stdlib = temproot
     with app(f'-C {temproot} deps --exclude bar.py'):
         assert stderr == ''
         assert status == 0
@@ -118,7 +117,9 @@ Searching brython_stdlib.js...
         with open(outfile) as f:
             content = f.read()
 
-        l = len(content)
+        # Do not search over big content.
+        assert len(content) < 3000
+
         assert 'colorsys' in content
         assert 'this' not in content
         assert 'keyword' in content
